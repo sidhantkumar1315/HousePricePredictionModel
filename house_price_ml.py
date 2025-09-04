@@ -66,3 +66,22 @@ def gradient_descent(X, y, w_init, b_init, alpha, num_iters):
             print(f"Iteration {i:4}: Cost {float(J_history[-1]):8.2f}   ")
         
     return w, b, J_history, w_history #return w and J,w history for graphing
+
+#this function normalize the features
+def zscore_normalize_features(X):
+
+    # Convert to numpy array with explicit dtype
+    X = np.array(X, dtype=np.float64)
+    
+    # find the mean of each column/feature
+    mu = np.mean(X, axis=0)
+    # find the standard deviation of each column/feature
+    sigma = np.std(X, axis=0)
+    
+    # Avoid division by zero
+    sigma = np.where(sigma == 0, 1, sigma)
+    
+    # element-wise, subtract mu for that column from each example, divide by std for that column
+    X_norm = (X - mu) / sigma      
+
+    return (X_norm, mu, sigma)
