@@ -1,4 +1,5 @@
 import numpy as np
+import math
 
 #this function calculates the cost function
 def compute_cost(X, y, w, b):
@@ -39,3 +40,29 @@ def compute_gradient(X, y, w, b):
     dj_db /= m
 
     return dj_dw, dj_db
+
+#this function calculates gradient descent
+def gradient_descent(X, y, w_init, b_init, alpha, num_iters):
+    m = len(X)
+
+    J_history = []
+    w_history = []
+    w = np.copy(w_init)
+    b = b_init
+
+    for i in range(num_iters):
+        dj_dw, dj_db = compute_gradient(X, y, w, b)
+
+        w = w - (alpha * dj_dw)
+        b = b - (alpha * dj_db)
+
+        if i<100000:      # prevent resource exhaustion 
+            cost =  compute_cost(X, y, w, b)
+            J_history.append(cost)
+
+        # Print cost every at intervals 10 times or as many iterations if < 10
+        if i% math.ceil(num_iters/10) == 0:
+            w_history.append(w)
+            print(f"Iteration {i:4}: Cost {float(J_history[-1]):8.2f}   ")
+        
+    return w, b, J_history, w_history #return w and J,w history for graphing
