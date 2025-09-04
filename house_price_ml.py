@@ -95,3 +95,21 @@ def predict(X, w, b):
           p[i] = np.dot(w, X[i]) + b
 
      return p
+
+#this function helps in evaluating model(calculating mean square error, root mean squared error, mean absolute error, r sqaure)
+def evaluate_model(y_true, y_pred):
+      # Mean Squared Error
+      mse = np.mean((y_true - y_pred) ** 2)
+
+      # Root Mean Squared Error  
+      rmse = np.sqrt(mse)
+
+      # Mean Absolute Error
+      mae = np.mean(np.abs(y_true - y_pred))
+
+      # R-squared (coefficient of determination)
+      ss_res = np.sum((y_true - y_pred) ** 2)
+      ss_tot = np.sum((y_true - np.mean(y_true)) ** 2)
+      r2 = 1 - (ss_res / ss_tot)
+
+      return mse, rmse, mae, r2
