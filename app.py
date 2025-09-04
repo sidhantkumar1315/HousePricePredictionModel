@@ -143,5 +143,76 @@ def predict_price():
 
 @app.route('/about')
 def about():
-    """About page explaining the model"""
     return render_template('about.html')
+
+@app.route('/visualization')
+def visualization():
+    load_model()
+    return render_template('visualization.html')
+
+@app.route('/get_plot_data')
+def get_plot_data():
+    load_model()
+    
+    if test_data is None:
+        return jsonify({'error': 'No test data available'})
+    
+    # Prediction vs Actual scatter plot
+    prediction_plot = {
+        'x': [float(x) for x in test_data['y_actual'].tolist()],
+        'y': [float(y) for y in test_data['y_predicted'].tolist()],
+        'mode': 'markers',
+        'type': 'scatter',
+        'name': 'Predictions',
+        'marker': {
+            'size': 8,
+            'color': 'rgba(55, 126, 184, 0.7)',
+            'line': {'color': 'rgba(55, 126, 184, 1)', 'width': 1}
+        }
+    }
+    
+    # Perfect prediction line (y = x)
+    min_price = float(min(min(test_data['y_actual']), min(test_data['y_predicted'])))
+    max_price = float(max(max(test_data['y_actual']), max(test_data['y_predicted'])))
+    
+    perfect_line = {
+        'x': [min_price, max_price],
+        'y': [min_price, max_price],
+        'mode': 'lines',
+        'type': 'scatter',
+        'name': 'Perfect Prediction',
+        'line': {'color': 'red', 'dash': 'dash', 'width': 2}
+    }
+    
+    # Cost history plot
+    cost_plot = {
+        'x': list(range(len(test_data['cost_history']))),
+        'y': [float(cost) for cost in test_data['cost_history']],
+        'mode': 'lines',
+        'type': 'scatter',
+        'name': 'Training Cost',
+        'line': {'color': 'green', 'width': 3}
+    }
+    
+    # Calculate R² and RMSE for display
+    y_actual = test_data['y_actual']
+    y_pred = test_data['y_predicted']
+    
+    ss_res = np.sum((y_actual - y_pred) ** 2)
+    ss_tot = np.sum((y_actual - np.mean(y_actual)) ** 2)
+    r2 = 1 - (ss_res / ss_tot)
+    rmse = np.sqrt(np.mean((y_actual - y_pred) ** 2))
+    
+    return jsonify({
+        'prediction_plot': prediction_plot,
+        'perfect_line': perfect_line,
+        'cost_plot': cost_plot,
+        'metrics': {
+            'r2': float(round(r2, 3)),
+            'rmse': float(round(rmse, 2)),
+            'samples': int(len(y_actual))
+        }
+    })
+
+if __name__ == '__main__':
+    app.run()
