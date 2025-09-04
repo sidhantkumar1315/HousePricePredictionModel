@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import matplotlib.pyplot as plt
+import pandas as pd
 
 #this function calculates the cost function
 def compute_cost(X, y, w, b):
@@ -124,3 +125,21 @@ def plot_cost_history(J_history):
       plt.ylabel('Cost')
       plt.grid(True)
       plt.show()
+
+#this functions loads training data from data/train.csv
+def load_housing_data():
+      # Load the CSV file
+      data = pd.read_csv('data/train.csv')
+
+      print(f"Dataset shape: {data.shape}")
+      print(f"Columns: {data.columns.tolist()}")
+
+      # Display first few rows
+      print("\nFirst 5 rows:")
+      print(data.head())
+
+      # Check for missing values
+      print(f"\nMissing values per column:")
+      print(data.isnull().sum().sort_values(ascending=False).head(10))
+
+      return data
