@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import matplotlib.pyplot as plt
 
 #this function calculates the cost function
 def compute_cost(X, y, w, b):
@@ -113,3 +114,13 @@ def evaluate_model(y_true, y_pred):
       r2 = 1 - (ss_res / ss_tot)
 
       return mse, rmse, mae, r2
+
+#this function plots the graph
+def plot_cost_history(J_history):
+      plt.figure(figsize=(10, 6))
+      plt.plot(J_history)
+      plt.title('Cost vs Iterations')
+      plt.xlabel('Iterations')
+      plt.ylabel('Cost')
+      plt.grid(True)
+      plt.show()
