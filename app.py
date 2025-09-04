@@ -139,3 +139,9 @@ def predict_price():
             'success': False,
             'error': str(e)
         })
+    
+
+@app.route('/about')
+def about():
+    """About page explaining the model"""
+    return render_template('about.html')
