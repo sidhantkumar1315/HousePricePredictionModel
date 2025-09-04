@@ -85,3 +85,13 @@ def zscore_normalize_features(X):
     X_norm = (X - mu) / sigma      
 
     return (X_norm, mu, sigma)
+
+#this function predicts the value
+def predict(X, w, b):
+     m = X.shape[0]
+     p = np.zeros(m)
+
+     for i in range(m):
+          p[i] = np.dot(w, X[i]) + b
+
+     return p
