@@ -128,11 +128,27 @@ def plot_cost_history(J_history):
 
 #this functions loads training data from data/train.csv
 def load_housing_data():
-      # Load the CSV file
-      data = pd.read_csv('data/train.csv')
+      import os
+      # Try different possible paths for the CSV file
+      possible_paths = [
+          'data/train.csv',
+          './data/train.csv',
+          os.path.join(os.path.dirname(__file__), 'data', 'train.csv')
+      ]
+      
+      for path in possible_paths:
+          try:
+              data = pd.read_csv(path)
+              print(f"Successfully loaded data from: {path}")
+              print(f"Dataset shape: {data.shape}")
+              return data
+          except FileNotFoundError:
+              print(f"File not found at: {path}")
+              continue
+      
+      # If no file found, raise error
+      raise FileNotFoundError("train.csv not found. Please ensure the data/train.csv file is available.")
 
-      print(f"Dataset shape: {data.shape}")
-      return data
 
 #this function splits data into training and testing sets
 def split_data(X, y, test_size=0.2):
