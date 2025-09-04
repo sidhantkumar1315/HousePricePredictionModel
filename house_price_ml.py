@@ -132,14 +132,22 @@ def load_housing_data():
       data = pd.read_csv('data/train.csv')
 
       print(f"Dataset shape: {data.shape}")
-      print(f"Columns: {data.columns.tolist()}")
-
-      # Display first few rows
-      print("\nFirst 5 rows:")
-      print(data.head())
-
-      # Check for missing values
-      print(f"\nMissing values per column:")
-      print(data.isnull().sum().sort_values(ascending=False).head(10))
-
       return data
+
+#this function splits data into training and testing sets
+def split_data(X, y, test_size=0.2):
+    m = X.shape[0]
+    indices = np.random.permutation(m)
+    split_point = int(m * (1 - test_size))
+    
+    train_indices = indices[:split_point]
+    test_indices = indices[split_point:]
+    
+    X_train = X[train_indices]
+    X_test = X[test_indices]
+    y_train = y[train_indices]
+    y_test = y[test_indices]
+    
+    return X_train, X_test, y_train, y_test
+
+
