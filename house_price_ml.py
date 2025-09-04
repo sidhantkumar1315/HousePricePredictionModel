@@ -150,4 +150,51 @@ def split_data(X, y, test_size=0.2):
     
     return X_train, X_test, y_train, y_test
 
+#this function preprocesses the training data
+def preprocess_data(data):
+    selected_features = [
+        'GrLivArea', 'TotalBsmtSF', '1stFlrSF', '2ndFlrSF', 
+        'OverallQual', 'OverallCond', 'YearBuilt', 'GarageCars',
+        'MSZoning', 'Neighborhood', 'KitchenQual', 'CentralAir'
+    ]
+    
+    df = data[selected_features + ['SalePrice']].copy()
+    
+    # Handle missing values
+    numerical_cols = ['GrLivArea', 'TotalBsmtSF', '1stFlrSF', '2ndFlrSF', 
+                      'OverallQual', 'OverallCond', 'YearBuilt', 'GarageCars']
+    
+    for col in numerical_cols:
+        df[col] = df[col].fillna(df[col].median())
+    
+    categorical_cols = ['MSZoning', 'Neighborhood', 'KitchenQual', 'CentralAir']
+    
+    for col in categorical_cols:
+        df[col] = df[col].fillna(df[col].mode()[0])
+    
+    # Encode categorical variables
+    df['CentralAir'] = df['CentralAir'].map({'Y': 1, 'N': 0})
+    
+    kitchen_mapping = {'Ex': 5, 'Gd': 4, 'TA': 3, 'Fa': 2, 'Po': 1}
+    df['KitchenQual'] = df['KitchenQual'].map(kitchen_mapping)
+    
+    # One-hot encode MSZoning
+    df = pd.get_dummies(df, columns=['MSZoning'], prefix='Zone')
+    
+    # Neighborhood - keep top 10 most common
+    top_neighborhoods = df['Neighborhood'].value_counts().head(10).index
+    df['Neighborhood_Popular'] = df['Neighborhood'].apply(
+        lambda x: 1 if x in top_neighborhoods else 0
+    )
+    df.drop('Neighborhood', axis=1, inplace=True)
+    
+    # Separate features and target
+    y = df['SalePrice'].values
+    X = df.drop('SalePrice', axis=1).values
+    feature_names = df.drop('SalePrice', axis=1).columns.tolist()
+    
+    print(f"Preprocessed data shape: {X.shape}")
+    
+    return X, y, feature_names
+
 
